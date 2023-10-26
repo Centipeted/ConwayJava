@@ -14,29 +14,29 @@ public class Rules {
 		this.dieOverpop = dieOverpop;
 	}
 	
-	int getRebornMin() {
+	public int getRebornMin() {
 		return rebornMin;
 	}
-	int getRebornMax() {
+	public int getRebornMax() {
 		return rebornMax;
 	}
-	int getDieUnderpop() {
+	public int getDieUnderpop() {
 		return dieUnderpop;
 	}
-	int getDieOverpop() {
+	public int getDieOverpop() {
 		return dieOverpop;
 	}
 	
-	void setRebornMin(int rebornMin) {
+	public void setRebornMin(int rebornMin) {
 		this.rebornMin = rebornMin;
 	}
-	void setRebornMax(int rebornMax) {
+	public void setRebornMax(int rebornMax) {
 		this.rebornMax = rebornMax;
 	}
-	void setDieUnderpop(int dieUnderpop) {
+	public void setDieUnderpop(int dieUnderpop) {
 		this.dieUnderpop = dieUnderpop;
 	}
-	void setieOverpop(int dieOverpop) {
+	public void setieOverpop(int dieOverpop) {
 		this.dieOverpop = dieOverpop;
 	}
 }
