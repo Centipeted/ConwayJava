@@ -28,8 +28,20 @@ public class SquareBoard implements Board {
 		board[12][9].setState(true);
 		board[10][8].setState(true);
 		
-		//System.out.println(newBoard[0][0].getState());
-	}	
+		newBoard[10][10].setState(true);
+		newBoard[11][10].setState(true);
+		newBoard[11][9].setState(true);
+		newBoard[12][9].setState(true);
+		newBoard[10][8].setState(true);
+	}
+	
+	public int getRowCnt() {
+		return rowCnt;
+	}
+	
+	public int getColCount() {
+		return colCnt;
+	}
 	
 	@Override
 	public int rtnNeighborCnt(int xCoord, int yCoord) {
@@ -98,7 +110,7 @@ public class SquareBoard implements Board {
 		}
 	}
 	
-	void drawCells(){
+	public void drawCells(){
 		
 		//System.out.println("drawcells start");
 	    for (int i = 0; i < rowCnt; i++){
@@ -118,7 +130,21 @@ public class SquareBoard implements Board {
 	            			 (840 / rowCnt), (840 / rowCnt), Color.WHITE);
 	            } 
 	        }
+	        
+	       // i * (840/60)+20=10
 	    }
 	    canvas.repaint();	    
+	}
+	
+	public void setSquareState(int xCoord, int yCoord, boolean state) {
+        if (xCoord >= 0 && xCoord < colCnt && yCoord >= 0 && yCoord < rowCnt) {
+            board[xCoord][yCoord].setState(state);
+            newBoard[xCoord][yCoord].setState(state);
+            canvas.repaint();
+        }
+    }
+	
+	public boolean getState(int xCoord, int yCoord) {
+		return board[xCoord][yCoord].getState();
 	}
 }
