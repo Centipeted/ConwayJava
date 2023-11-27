@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 public class Main {
 	
-	private static boolean stopped = false;
+	private static boolean stopped = true;
 	
 	public static void main(String[] args) throws InterruptedException {
 		CanvasCreator draw = new CanvasCreator();
@@ -21,23 +21,13 @@ public class Main {
 			draw.clearSqureList();
 			draw.drawSquare(0, 0, 880, 880, new Color(30, 30, 30));
 			//System.out.println("draw.getClickedX(): " + draw.getClickedX() + ", draw.getClickedY(): " + draw.getClickedY());
-			if (draw.getClickedX() == 60 && draw.getClickedY() == 0) {
-				if (stopped == false) {
-					stopped = true;
-				}
-				else {
-					stopped = false;
-				}
-				draw.setClickedX(61);
-				draw.setClickedY(1);
+			if (draw.getIsStopped() == false) {
+				sqb.calcNextStep();
+
 			}
-			if (stopped == false) {
-					sqb.calcNextStep();
-				}
 			sqb.drawCells();
-			Thread.sleep(100);
+			Thread.sleep(draw.getSimulationSpeed());
 		}
-		
 	}
 
 }
