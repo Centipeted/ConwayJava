@@ -10,17 +10,24 @@ public class Main {
 	private static boolean stopped = true;
 	
 	public static void main(String[] args) throws InterruptedException {
-		CanvasCreator draw = new CanvasCreator();
+		SquareBoard sqb = new SquareBoard(60, 60);
+		CanvasCreator draw = new CanvasCreator(sqb);
 		draw.setVisible(true);
-		SquareBoard sqb = new SquareBoard(60, 60, draw);
-		draw.setSquareBoard(sqb);
+		sqb.setCanvas(draw);
 		sqb.drawCells();
 		
-		//draw.drawSquare(100, 100, 14, 14, Color.RED);
 		while(true) {
+			if(draw.getChange() == 1) {
+				sqb = draw.getNewSquareBoard(true);
+				draw.setChange(0);
+			}
+			else if (draw.getChange() == 2) {
+				sqb = draw.getNewSquareBoard(false);
+				draw.setChange(0);
+			}
 			draw.clearSqureList();
 			draw.drawSquare(0, 0, 880, 880, new Color(30, 30, 30));
-			//System.out.println("draw.getClickedX(): " + draw.getClickedX() + ", draw.getClickedY(): " + draw.getClickedY());
+			
 			if (draw.getIsStopped() == false) {
 				sqb.calcNextStep();
 

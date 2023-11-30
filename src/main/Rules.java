@@ -36,7 +36,7 @@ public class Rules {
 	public void setDieUnderpop(int dieUnderpop) {
 		this.dieUnderpop = dieUnderpop;
 	}
-	public void setieOverpop(int dieOverpop) {
+	public void setDieOverpop(int dieOverpop) {
 		this.dieOverpop = dieOverpop;
 	}
 }

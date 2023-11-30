@@ -5,15 +5,14 @@ import java.awt.Color;
 public class SquareBoard implements Board {
 	private int rowCnt;
 	private int colCnt;
-	private Cell board[][];
-	private Cell newBoard[][];
+	public Cell board[][];
+	public Cell newBoard[][];
 	private Rules rules = new Rules(3, 3, 2, 3);
 	private CanvasCreator canvas;
 
-	public SquareBoard(int rowCnt, int colCnt, CanvasCreator canvas) {
+	public SquareBoard(int rowCnt, int colCnt) {
 		this.rowCnt = rowCnt;
 		this.colCnt = colCnt;
-		this.canvas = canvas;
 		board = new Cell[rowCnt][colCnt];
 	    newBoard = new Cell[rowCnt][colCnt];
 		for (int i = 0; i < this.rowCnt; i++) {
@@ -146,5 +145,13 @@ public class SquareBoard implements Board {
 	
 	public boolean getState(int xCoord, int yCoord) {
 		return board[xCoord][yCoord].getState();
+	}
+	
+	public Rules getRules() {
+		return rules;
+	}
+	
+	public void setCanvas(CanvasCreator canvas) {
+		this.canvas = canvas;
 	}
 }
