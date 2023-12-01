@@ -2,16 +2,18 @@ package main;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-public class JPanelSquare extends JPanel {
+public class JPanelSquare extends JPanel implements Serializable {
 	private final List<Square> squares;
 	
 	public JPanelSquare() {
 	  squares = new ArrayList<>();
+	  
 	}
 	
 	@Override
@@ -29,10 +31,10 @@ public class JPanelSquare extends JPanel {
 	}
 	
 	public void addSquare(int xCoord, int yCoord, int width, int height, Color color) {
-	  squares.add(new Square(xCoord, yCoord, width, height, color));
+		squares.add(new Square(xCoord, yCoord, width, height, color));
 	}
 	
-	private static class Square {
+	private static class Square implements Serializable{
 	  private final int xCoord;
 	  private final int yCoord;
 	  private final int width;

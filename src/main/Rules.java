@@ -1,6 +1,8 @@
 package main;
 
-public class Rules {
+import java.io.Serializable;
+
+public class Rules implements Serializable{
 	
 	private int rebornMin;		//number of live neighbors over which a dead cell turns alive
 	private int rebornMax;		//number of live neighbors under which a dead cell turns alive

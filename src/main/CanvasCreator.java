@@ -3,13 +3,16 @@ package main;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Serializable;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class CanvasCreator extends JFrame{
+public class CanvasCreator extends JFrame implements Serializable{
 	
 	private JPanelSquare leftPanel;
 	private JPanel rightPanel;
@@ -31,30 +34,33 @@ public class CanvasCreator extends JFrame{
 	private JButton dieOverpopMinus;
 	private JButton sizePlus;
 	private JButton sizeMinus;
+	private JButton saveGame;
+	private JButton loadGame;
 	private JTextField rebornMinJTextField;
 	private JTextField rebornMaxJTextField;
 	private JTextField dieUnderpopJTextField;
 	private JTextField dieOverpopJTextField;
-	private JTextField playfieldSizeJTextField;
+	private JComboBox playfiledSizeJComboBox;
+	private JComboBox saveIdJComboBox;
 	private boolean isStopped;
 	private int simulationSpeed;
 	private int change;
 	private	int sqbCurrentSizeIndex;
-	private static final int[] sqbArray = {
-			1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 15, 20, 21, 24, 28, 30, 35, 40, 42, 56, 60, 70, 84, 105, 120, 140, 168, 210, 280, 420, 840
-    };
+	private int saveId; 
+	public static final int[] sqbArray = {
+			5, 6, 7, 8, 10, 12, 15, 20, 24, 28, 30, 35, 40, 56, 60, 70, 84, 105, 120};
+	private static final int[] saveArray = {1, 2, 3, 4, 5, 6};
 	
 
 	public CanvasCreator(SquareBoard sqb) {
 		change = 0;
-		squareBoard = sqb;
-		sqbCurrentSizeIndex = 21;
+		this.squareBoard = sqb;
+		sqbCurrentSizeIndex = 14;
 		simulationSpeed = 100;
 		isStopped = false;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Conway");
 		setSize(1325, 916);
-		setBackground(new Color(0,0,255));
 		setResizable(false);
 		setLayout(null);
 		
@@ -132,7 +138,7 @@ public class CanvasCreator extends JFrame{
 		container.add(rightPanel);
 		
 		
-		speedPlus = new JButton("SPEED+");
+		speedPlus = new JButton("Speed+");
 		speedPlus.setBounds(235, 150, 120, 30);
 		speedPlus.addActionListener(e -> {
 		    if (simulationSpeed - 10 > 10) {
@@ -142,7 +148,7 @@ public class CanvasCreator extends JFrame{
 		    }
 		});
 		
-		speedMinus = new JButton("SPEED-");
+		speedMinus = new JButton("Speed-");
 		speedMinus.setBounds(85, 150, 120, 30);
 		speedMinus.addActionListener(e -> {
 			if(simulationSpeed + 10 < 200) {
@@ -285,38 +291,80 @@ public class CanvasCreator extends JFrame{
 		rightPanel.add(dieOverpopPlus);
 		rightPanel.add(dieOverpopMinus);
 		
-		playfieldSizeJTextField = new JTextField();
-		playfieldSizeJTextField.setEditable(false);
-		playfieldSizeJTextField.setBounds(80, 540, 30, 30);
-		rightPanel.add(playfieldSizeJTextField);
-		playfieldSizeJTextField.setText(" " + Integer.toString(sqbArray[sqbCurrentSizeIndex]));
-		
 		sizePlus = new JButton("Size+");
-		sizePlus.setBounds(230, 490, 130, 30);
+		sizePlus.setBounds(230, 450, 130, 30);
 		sizePlus.addActionListener(e -> {
-			if(sqbCurrentSizeIndex < 31) {
+			if(sqbCurrentSizeIndex < 18) {
 				sqbCurrentSizeIndex++;
-				playfieldSizeJTextField.setText(" " + Integer.toString(sqbArray[sqbCurrentSizeIndex]));
 				change = 1;
-				
+			    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
 			}
 		});
 		
 		sizeMinus = new JButton("Size-");
-		sizeMinus.setBounds(80, 490, 130, 30);
+		sizeMinus.setBounds(80, 450, 130, 30);
 		sizeMinus.addActionListener(e -> {
-			if(sqbCurrentSizeIndex > 11) {
+			if(sqbCurrentSizeIndex > 0) {
+				System.out.println("SizeMinus: setting sqbCurrentSizeIndex from " + sqbCurrentSizeIndex + " to " + (sqbCurrentSizeIndex - 1));
 				sqbCurrentSizeIndex--;
-				playfieldSizeJTextField.setText(" " + Integer.toString(sqbArray[sqbCurrentSizeIndex]));
-				change = 2;
+				change = 1;
+			    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
 			}
 		});
 		
-		
-		
 		rightPanel.add(sizePlus);
 		rightPanel.add(sizeMinus);
+		
+		playfiledSizeJComboBox = new JComboBox(toObjectArray(sqbArray));
+		playfiledSizeJComboBox.setBounds(80, 500, 50, 30);
+		playfiledSizeJComboBox.addActionListener(e -> {
+	        int size = (int) playfiledSizeJComboBox.getSelectedItem();
+	        for (int i = 0; i < sqbArray.length; i++) {
+	            if (sqbArray[i] == size) {
+	                sqbCurrentSizeIndex = i;
+	            }
+	        }
+	        squareBoard.setCanvas(this);
+	        change = 1;
+	    });
+		rightPanel.add(playfiledSizeJComboBox);
+	    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
+	    
+	    saveGame = new JButton("Save game");
+	    saveGame.setBounds(80, 550, 130, 30);
+	    saveGame.addActionListener(e -> {
+			try {
+				saveGame();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		});
+	    
+	    loadGame = new JButton("Load game");
+	    loadGame.setBounds(230, 550, 130, 30);
+	    loadGame.addActionListener(e -> {
+			change = 2;
+		});
+	    
+	    rightPanel.add(saveGame);
+	    rightPanel.add(loadGame);
+	    
+	    saveIdJComboBox = new JComboBox(toObjectArray(saveArray));
+	    saveIdJComboBox.setBounds(80, 600, 50, 30);
+	    saveIdJComboBox.addActionListener(e -> {
+	    	saveId = (int) saveIdJComboBox.getSelectedItem();
+	    });
+	    saveIdJComboBox.setSelectedItem(saveArray[0]);
+	    rightPanel.add(saveIdJComboBox);
 	}
+	
+	private static Integer[] toObjectArray(int[] array) {
+        Integer[] objectArray = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            objectArray[i] = array[i];
+        }
+        return objectArray;
+    }
 	
 	
 	
@@ -326,21 +374,21 @@ public class CanvasCreator extends JFrame{
 			public void mousePressed(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY() - 36;
-				int squareSize = 840 / squareBoard.getRowCnt();
+				int squareSize = 840 / squareBoard.getSideSize();
 	
 				clickedY = (mouseY - 20) / squareSize;
 				clickedX = (mouseX - 20) / squareSize;
 				
-				if(clickedX < squareBoard.getRowCnt() && clickedY < squareBoard.getRowCnt() && mouseX >= 20 && mouseY >= 20) {
+				if(clickedX < squareBoard.getSideSize() && clickedY < squareBoard.getSideSize() && mouseX >= 20 && mouseY >= 20) {
 					if(squareBoard.getState(clickedX, clickedY) == false) {
 						squareBoard.setSquareState(clickedX, clickedY, true);
-						drawSquare((clickedX * (840 / squareBoard.getColCount()) + 20), (clickedY * (840 / squareBoard.getColCount()) + 20),
-		            			 (840 / squareBoard.getRowCnt()), (840 / squareBoard.getRowCnt()), Color.BLACK);
+						drawSquare((clickedX * (840 / squareBoard.getSideSize()) + 20), (clickedY * (840 / squareBoard.getSideSize()) + 20),
+		            			 (840 / squareBoard.getSideSize()), (840 / squareBoard.getSideSize()), Color.BLACK);
 					}
 					else {
 						squareBoard.setSquareState(clickedX, clickedY, false);
-						drawSquare( clickedX * (840 / squareBoard.getColCount()) + 20, clickedY * (840 / squareBoard.getColCount()) + 20,
-		            			 (840 / squareBoard.getRowCnt()), (840 / squareBoard.getRowCnt()), Color.WHITE);
+						drawSquare( clickedX * (840 / squareBoard.getSideSize()) + 20, clickedY * (840 / squareBoard.getSideSize()) + 20,
+		            			 (840 / squareBoard.getSideSize()), (840 / squareBoard.getSideSize()), Color.WHITE);
 						
 					}
 					repaint();
@@ -366,18 +414,20 @@ public class CanvasCreator extends JFrame{
 		leftPanel.repaint();
 	}
 	
-	public SquareBoard getNewSquareBoard(boolean bigger) {
-		SquareBoard newBoard = new SquareBoard(sqbArray[sqbCurrentSizeIndex], sqbArray[sqbCurrentSizeIndex]);
+	public SquareBoard getResizedSquareBoard(boolean bigger) {
+		SquareBoard newBoard = new SquareBoard(sqbArray[sqbCurrentSizeIndex]);
 		
 			if(bigger) {
-				for(int i = 0; i < squareBoard.getRowCnt() - 1; i++) {
-					for(int j = 0; j < squareBoard.getRowCnt() - 1; j++) {
+				System.out.println("Bigger true: sqbIndex, sqbArray[sqbIndex] " + sqbCurrentSizeIndex + " " + sqbArray[sqbCurrentSizeIndex]);
+				for(int i = 0; i < squareBoard.getSideSize() - 1; i++) {
+					for(int j = 0; j < squareBoard.getSideSize() - 1; j++) {
 						newBoard.board[i][j] = squareBoard.board[i][j];
 						newBoard.newBoard[i][j] = squareBoard.newBoard[i][j];
 					}
 				}
 			}
 			else {
+				System.out.println("Bigger false: sqbIndex, sqbArray[sqbIndex] " + sqbCurrentSizeIndex + " " + sqbArray[sqbCurrentSizeIndex]);
 				for(int i = 0; i < sqbArray[sqbCurrentSizeIndex] - 1; i++) {
 					for(int j = 0; j < sqbArray[sqbCurrentSizeIndex] - 1; j++) {
 						newBoard.board[i][j] = squareBoard.board[i][j];
@@ -386,9 +436,28 @@ public class CanvasCreator extends JFrame{
 				}
 			}
 			
+			newBoard.getRules().setRebornMin(squareBoard.getRules().getRebornMin());
+			newBoard.getRules().setRebornMax(squareBoard.getRules().getRebornMax());
+			newBoard.getRules().setDieUnderpop(squareBoard.getRules().getDieUnderpop());
+			newBoard.getRules().setDieOverpop(squareBoard.getRules().getDieOverpop());
+			
+			
 			squareBoard = newBoard;
 			squareBoard.setCanvas(this);
 		return newBoard;
+	}
+	
+	public void saveGame() throws IOException {
+		IOHandler.saveGameState("savedGameState"+ saveId + ".txt", squareBoard);
+	}
+	
+	public SquareBoard loadGame() throws IOException {
+		System.out.println("loading called");
+		/*rebornMinJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMin()));
+		rebornMaxJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMax()));
+		dieUnderpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieUnderpop()));
+		dieOverpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieOverpop()));*/
+		return IOHandler.loadGameState("savedGameState"+ saveId + ".txt", this);
 	}
 
 	public int getClickedX() {
@@ -434,6 +503,16 @@ public class CanvasCreator extends JFrame{
 		this.change = change;
 	}
 	
+	public void setSqb(SquareBoard sqb) {
+		this.squareBoard = sqb;
+	}
 	
+	public void refreshAllTextfields() {
+		rebornMinJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMin()));
+		rebornMaxJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMax()));
+		dieUnderpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieUnderpop()));
+		dieOverpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieOverpop()));
+		playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
+	}
 	
 }

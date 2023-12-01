@@ -1,27 +1,27 @@
 package main;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class SquareBoard implements Board {
-	private int rowCnt;
-	private int colCnt;
+public class SquareBoard implements Board, Serializable {
+	private int sideSize;
 	public Cell board[][];
 	public Cell newBoard[][];
 	private Rules rules = new Rules(3, 3, 2, 3);
 	private CanvasCreator canvas;
 
-	public SquareBoard(int rowCnt, int colCnt) {
-		this.rowCnt = rowCnt;
-		this.colCnt = colCnt;
-		board = new Cell[rowCnt][colCnt];
-	    newBoard = new Cell[rowCnt][colCnt];
-		for (int i = 0; i < this.rowCnt; i++) {
-			for (int j = 0; j < this.colCnt; j++) {
+	public SquareBoard(int sideSize) {
+		this.sideSize = sideSize;
+		this.sideSize = sideSize;
+		board = new Cell[sideSize][sideSize];
+	    newBoard = new Cell[sideSize][sideSize];
+		for (int i = 0; i < this.sideSize; i++) {
+			for (int j = 0; j < this.sideSize; j++) {
 				this.board[i][j] = new Cell(false);
 				this.newBoard[i][j] = new Cell(false);
 			}
 		}
-		board[10][10].setState(true);
+		/*board[10][10].setState(true);
 		board[11][10].setState(true);
 		board[11][9].setState(true);
 		board[12][9].setState(true);
@@ -31,15 +31,11 @@ public class SquareBoard implements Board {
 		newBoard[11][10].setState(true);
 		newBoard[11][9].setState(true);
 		newBoard[12][9].setState(true);
-		newBoard[10][8].setState(true);
+		newBoard[10][8].setState(true);*/
 	}
 	
-	public int getRowCnt() {
-		return rowCnt;
-	}
-	
-	public int getColCount() {
-		return colCnt;
+	public int getSideSize() {
+		return sideSize;
 	}
 	
 	@Override
@@ -52,15 +48,15 @@ public class SquareBoard implements Board {
 	            int tmpY = yCoord + j;
 
 	            if (tmpX < 0){
-	                tmpX = colCnt - 1;
+	                tmpX = sideSize - 1;
 	            }
 	            if (tmpY < 0){
-	                tmpY = rowCnt - 1;
+	                tmpY = sideSize - 1;
 	            }
-	            if (tmpX >= colCnt){
+	            if (tmpX >= sideSize){
 	                tmpX = 0;
 	            }
-	            if (tmpY >= rowCnt){
+	            if (tmpY >= sideSize){
 	                tmpY = 0;
 	            }
 				if (board[tmpX][tmpY].getState() == true) {
@@ -97,13 +93,13 @@ public class SquareBoard implements Board {
 
 	@Override
 	public void calcNextStep() {
-		for (int i = 0; i < this.rowCnt; i++) {
-			for (int j = 0; j < this.colCnt; j++) {
+		for (int i = 0; i < this.sideSize; i++) {
+			for (int j = 0; j < this.sideSize; j++) {
 				newBoard[i][j].setState(rtnCellNextState(i, j));
 			}
 		}
-		for (int i = 0; i < this.rowCnt; i++) {
-			for (int j = 0; j < this.colCnt; j++) {
+		for (int i = 0; i < this.sideSize; i++) {
+			for (int j = 0; j < this.sideSize; j++) {
 				board[i][j].setState(newBoard[i][j].getState());
 			}
 		}
@@ -111,32 +107,23 @@ public class SquareBoard implements Board {
 	
 	public void drawCells(){
 		
-		//System.out.println("drawcells start");
-	    for (int i = 0; i < rowCnt; i++){
-	        for (int j = 0; j < colCnt; j++){
+	    for (int i = 0; i < sideSize; i++){
+	        for (int j = 0; j < sideSize; j++){
 	            if (newBoard[i][j].getState() == true){
-	            	//System.out.println(i + ". " + j + ". is true");
-	            	//System.out.println("square values are: " + i * (840 / colCnt) + ", " + j * (840 / colCnt) + ", "
-	            	//+ (840 / rowCnt) + ", " + (840 / rowCnt + ", " + Color.BLACK));
-	                canvas.drawSquare( i * (840 / colCnt) + 20, j * (840 / colCnt) + 20,
-	                		(840 / rowCnt), (840 / rowCnt), Color.BLACK);
+	                canvas.drawSquare( i * (840 / sideSize) + 20, j * (840 / sideSize) + 20,
+	                		(840 / sideSize), (840 / sideSize), Color.BLACK);
 	            }
 	            else{
-	            	//System.out.println(i + ". " + j + ". is false");
-	            	//System.out.println("square values are: " + i * (840 / colCnt) + ", " + j * (840 / colCnt) + ", "
-	            	//+ (840 / rowCnt) + ", " + (840 / rowCnt) + ", " + Color.WHITE);
-	            	canvas.drawSquare( i * (840 / colCnt) + 20, j * (840 / colCnt) + 20,
-	            			 (840 / rowCnt), (840 / rowCnt), Color.WHITE);
+	            	canvas.drawSquare( i * (840 / sideSize) + 20, j * (840 / sideSize) + 20,
+	            			 (840 / sideSize), (840 / sideSize), Color.WHITE);
 	            } 
 	        }
-	        
-	       // i * (840/60)+20=10
 	    }
-	    canvas.repaint();	    
+	    canvas.repaint();
 	}
 	
 	public void setSquareState(int xCoord, int yCoord, boolean state) {
-        if (xCoord >= 0 && xCoord < colCnt && yCoord >= 0 && yCoord < rowCnt) {
+        if (xCoord >= 0 && xCoord < sideSize && yCoord >= 0 && yCoord < sideSize) {
             board[xCoord][yCoord].setState(state);
             newBoard[xCoord][yCoord].setState(state);
             canvas.repaint();
