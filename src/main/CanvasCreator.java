@@ -36,6 +36,11 @@ public class CanvasCreator extends JFrame implements Serializable{
 	private JButton sizeMinus;
 	private JButton saveGame;
 	private JButton loadGame;
+	private JButton colorfulTurnOn;
+	private JButton colorfulTurnOff;
+	private JButton fadeLengthPlus;
+	private JButton fadeLengthMinus;
+	private JTextField fadeLength;
 	private JTextField rebornMinJTextField;
 	private JTextField rebornMaxJTextField;
 	private JTextField dieUnderpopJTextField;
@@ -43,21 +48,23 @@ public class CanvasCreator extends JFrame implements Serializable{
 	private JComboBox playfiledSizeJComboBox;
 	private JComboBox saveIdJComboBox;
 	private boolean isStopped;
+	private boolean isColorful;
 	private int simulationSpeed;
-	private int change;
+	private int changeId;
 	private	int sqbCurrentSizeIndex;
-	private int saveId; 
+	private int saveId;
 	public static final int[] sqbArray = {
 			5, 6, 7, 8, 10, 12, 15, 20, 24, 28, 30, 35, 40, 56, 60, 70, 84, 105, 120};
 	private static final int[] saveArray = {1, 2, 3, 4, 5, 6};
 	
 
 	public CanvasCreator(SquareBoard sqb) {
-		change = 0;
+		changeId = 0;
 		this.squareBoard = sqb;
 		sqbCurrentSizeIndex = 14;
 		simulationSpeed = 100;
 		isStopped = false;
+		isColorful = false;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Conway");
 		setSize(1325, 916);
@@ -296,7 +303,7 @@ public class CanvasCreator extends JFrame implements Serializable{
 		sizePlus.addActionListener(e -> {
 			if(sqbCurrentSizeIndex < 18) {
 				sqbCurrentSizeIndex++;
-				change = 1;
+				changeId = 1;
 			    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
 			}
 		});
@@ -305,9 +312,8 @@ public class CanvasCreator extends JFrame implements Serializable{
 		sizeMinus.setBounds(80, 450, 130, 30);
 		sizeMinus.addActionListener(e -> {
 			if(sqbCurrentSizeIndex > 0) {
-				System.out.println("SizeMinus: setting sqbCurrentSizeIndex from " + sqbCurrentSizeIndex + " to " + (sqbCurrentSizeIndex - 1));
 				sqbCurrentSizeIndex--;
-				change = 1;
+				changeId = 1;
 			    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
 			}
 		});
@@ -325,7 +331,7 @@ public class CanvasCreator extends JFrame implements Serializable{
 	            }
 	        }
 	        squareBoard.setCanvas(this);
-	        change = 1;
+	        changeId = 1;
 	    });
 		rightPanel.add(playfiledSizeJComboBox);
 	    playfiledSizeJComboBox.setSelectedItem(sqbArray[sqbCurrentSizeIndex]);
@@ -343,7 +349,7 @@ public class CanvasCreator extends JFrame implements Serializable{
 	    loadGame = new JButton("Load game");
 	    loadGame.setBounds(230, 550, 130, 30);
 	    loadGame.addActionListener(e -> {
-			change = 2;
+			changeId = 2;
 		});
 	    
 	    rightPanel.add(saveGame);
@@ -356,6 +362,73 @@ public class CanvasCreator extends JFrame implements Serializable{
 	    });
 	    saveIdJComboBox.setSelectedItem(saveArray[0]);
 	    rightPanel.add(saveIdJComboBox);
+	    
+	    colorfulTurnOn = new JButton("Colorful ON");
+	    colorfulTurnOn.setBounds(80, 650, 130, 30);
+	    colorfulTurnOn.addActionListener(e -> {
+		    if (isColorful) {
+		    	colorfulTurnOn.setVisible(false);
+		    	colorfulTurnOff.setVisible(true);
+		    } else {
+		    	colorfulTurnOn.setVisible(true);
+		        colorfulTurnOff.setVisible(false);
+		    }
+		    isColorful = !isColorful;
+		});
+	    
+	    colorfulTurnOff = new JButton("Colorful OFF");
+	    colorfulTurnOff.setBounds(80, 650, 130, 30);
+	    colorfulTurnOff.addActionListener(e -> {
+		    if (isColorful) {
+		    	colorfulTurnOn.setVisible(false);
+		    	colorfulTurnOff.setVisible(true);
+		    } else {
+		    	colorfulTurnOn.setVisible(true);
+		        colorfulTurnOff.setVisible(false);
+		    }
+		    isColorful = !isColorful;
+		});
+	    
+	    colorfulTurnOn.setVisible(false);
+	    
+	    rightPanel.add(colorfulTurnOn);
+	    rightPanel.add(colorfulTurnOff);
+	    
+	    fadeLengthPlus = new JButton("FadeLength+");
+	    fadeLengthPlus.setBounds(230, 700, 130, 30);
+	    fadeLengthPlus.addActionListener(e -> {
+	    	if(squareBoard.getFadeLength() < 255) {
+				squareBoard.setFadeLength(squareBoard.getFadeLength() + 1);
+				if(squareBoard.getFadeLength() < 10)
+					fadeLength.setText(" " + Integer.toString(squareBoard.getFadeLength()));
+				else
+					fadeLength.setText(Integer.toString(squareBoard.getFadeLength()));
+			}
+		});
+	    fadeLengthMinus = new JButton("FadeLength-");
+	    fadeLengthMinus.setBounds(80, 700, 130, 30);
+	    fadeLengthMinus.addActionListener(e -> {
+	    	if(squareBoard.getFadeLength() > 0) {
+				squareBoard.setFadeLength(squareBoard.getFadeLength() - 1);
+				if(squareBoard.getFadeLength() < 10)
+					fadeLength.setText(" " + Integer.toString(squareBoard.getFadeLength()));
+				else
+					fadeLength.setText(Integer.toString(squareBoard.getFadeLength()));
+			}
+		});
+	    
+	    colorfulTurnOn.setVisible(false);
+	    
+	    fadeLength = new JTextField();
+	    fadeLength.setBounds(230, 650, 30, 30);
+	    
+	    fadeLength.setText(" " + Integer.toString(squareBoard.getFadeLength()));
+	    
+	    rightPanel.add(colorfulTurnOn);
+	    rightPanel.add(colorfulTurnOff);
+	    rightPanel.add(fadeLengthPlus);
+	    rightPanel.add(fadeLengthMinus);
+	    rightPanel.add(fadeLength);
 	}
 	
 	private static Integer[] toObjectArray(int[] array) {
@@ -365,8 +438,6 @@ public class CanvasCreator extends JFrame implements Serializable{
         }
         return objectArray;
     }
-	
-	
 	
 	private void sqbMouseListener() {
 		addMouseListener(new MouseAdapter() {
@@ -380,19 +451,22 @@ public class CanvasCreator extends JFrame implements Serializable{
 				clickedX = (mouseX - 20) / squareSize;
 				
 				if(clickedX < squareBoard.getSideSize() && clickedY < squareBoard.getSideSize() && mouseX >= 20 && mouseY >= 20) {
-					if(squareBoard.getState(clickedX, clickedY) == false) {
-						squareBoard.setSquareState(clickedX, clickedY, true);
+					if(squareBoard.getSquareState(clickedX, clickedY) == 1) {
+						squareBoard.setSquareState(clickedX, clickedY, (byte)0);
 						drawSquare((clickedX * (840 / squareBoard.getSideSize()) + 20), (clickedY * (840 / squareBoard.getSideSize()) + 20),
 		            			 (840 / squareBoard.getSideSize()), (840 / squareBoard.getSideSize()), Color.BLACK);
 					}
 					else {
-						squareBoard.setSquareState(clickedX, clickedY, false);
+						squareBoard.setSquareState(clickedX, clickedY, (byte)1);
+						
 						drawSquare( clickedX * (840 / squareBoard.getSideSize()) + 20, clickedY * (840 / squareBoard.getSideSize()) + 20,
 		            			 (840 / squareBoard.getSideSize()), (840 / squareBoard.getSideSize()), Color.WHITE);
 						
 					}
 					repaint();
 				}
+				
+				
 			}
 			
 		});
@@ -418,7 +492,6 @@ public class CanvasCreator extends JFrame implements Serializable{
 		SquareBoard newBoard = new SquareBoard(sqbArray[sqbCurrentSizeIndex]);
 		
 			if(bigger) {
-				System.out.println("Bigger true: sqbIndex, sqbArray[sqbIndex] " + sqbCurrentSizeIndex + " " + sqbArray[sqbCurrentSizeIndex]);
 				for(int i = 0; i < squareBoard.getSideSize() - 1; i++) {
 					for(int j = 0; j < squareBoard.getSideSize() - 1; j++) {
 						newBoard.board[i][j] = squareBoard.board[i][j];
@@ -427,7 +500,6 @@ public class CanvasCreator extends JFrame implements Serializable{
 				}
 			}
 			else {
-				System.out.println("Bigger false: sqbIndex, sqbArray[sqbIndex] " + sqbCurrentSizeIndex + " " + sqbArray[sqbCurrentSizeIndex]);
 				for(int i = 0; i < sqbArray[sqbCurrentSizeIndex] - 1; i++) {
 					for(int j = 0; j < sqbArray[sqbCurrentSizeIndex] - 1; j++) {
 						newBoard.board[i][j] = squareBoard.board[i][j];
@@ -440,6 +512,7 @@ public class CanvasCreator extends JFrame implements Serializable{
 			newBoard.getRules().setRebornMax(squareBoard.getRules().getRebornMax());
 			newBoard.getRules().setDieUnderpop(squareBoard.getRules().getDieUnderpop());
 			newBoard.getRules().setDieOverpop(squareBoard.getRules().getDieOverpop());
+			newBoard.setFadeLength(squareBoard.getFadeLength());
 			
 			
 			squareBoard = newBoard;
@@ -452,12 +525,7 @@ public class CanvasCreator extends JFrame implements Serializable{
 	}
 	
 	public SquareBoard loadGame() throws IOException {
-		System.out.println("loading called");
-		/*rebornMinJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMin()));
-		rebornMaxJTextField.setText("  " + Integer.toString(squareBoard.getRules().getRebornMax()));
-		dieUnderpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieUnderpop()));
-		dieOverpopJTextField.setText("  " + Integer.toString(squareBoard.getRules().getDieOverpop()));*/
-		return IOHandler.loadGameState("savedGameState"+ saveId + ".txt", this);
+		return IOHandler.loadGameState("savedGameState"+ saveId + ".txt", this, squareBoard);
 	}
 
 	public int getClickedX() {
@@ -479,8 +547,12 @@ public class CanvasCreator extends JFrame implements Serializable{
 	public int getSqbCurrentSizeIndex() {
 		return sqbCurrentSizeIndex;
 	}
-	public int getChange() {
-		return change;
+	public int getChangeId() {
+		return changeId;
+	}
+	
+	public boolean getIsColorful() {
+		return isColorful;
 	}
 	
 	public void setClickedX(int x) {
@@ -499,12 +571,16 @@ public class CanvasCreator extends JFrame implements Serializable{
 		this.sqbCurrentSizeIndex = sqbCurrentSizeIndex;
 	}
 	
-	public void setChange(int change) {
-		this.change = change;
+	public void setChangeId(int changeId) {
+		this.changeId = changeId;
 	}
 	
 	public void setSqb(SquareBoard sqb) {
 		this.squareBoard = sqb;
+	}
+	
+	public void setIsColorful(boolean isColorful) {
+		this.isColorful = isColorful;
 	}
 	
 	public void refreshAllTextfields() {

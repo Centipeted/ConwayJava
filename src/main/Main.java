@@ -9,8 +9,6 @@ import javax.swing.Timer;
 
 public class Main {
 	
-	private static boolean stopped = true;
-	
 	public static void main(String[] args) throws InterruptedException, IOException {
 		SquareBoard sqb = new SquareBoard(60);
 		CanvasCreator draw = new CanvasCreator(sqb);
@@ -21,20 +19,17 @@ public class Main {
 		int previousSize = draw.getSqbCurrentSizeIndex();
 		
 		while(true) {
-			if(draw.getChange() == 1) {
-				System.out.println("Change == 1 detected");
+			if(draw.getChangeId() == 1) {
 				if(previousSize <= draw.getSqbCurrentSizeIndex()) {
 					sqb = draw.getResizedSquareBoard(true);
 				}
 				else {
 					sqb = draw.getResizedSquareBoard(false);
 				}
-				System.out.println("Change 1: Setting sqbCurrentSizeIndex from " + previousSize + " to " + draw.getSqbCurrentSizeIndex());
 				previousSize = draw.getSqbCurrentSizeIndex();
-				draw.setChange(0);
+				draw.setChangeId(0);
 			}
-			else if(draw.getChange() == 2) {
-				System.out.println("Change == 2 detected");
+			else if(draw.getChangeId() == 2) {
 				sqb = draw.loadGame();
 				draw.setSqb(sqb);
 				for (int i = 0; i < draw.sqbArray.length; i++) {
@@ -45,7 +40,7 @@ public class Main {
 				previousSize = draw.getSqbCurrentSizeIndex();
 				draw.refreshAllTextfields();
 				
-				draw.setChange(0);
+				draw.setChangeId(0);
 			}
 			
 			

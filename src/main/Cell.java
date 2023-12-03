@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class Cell implements Serializable {
 	
-	private boolean state;
+	private byte state;
 	
-	public Cell(boolean state) {
-		this.state = state;
+	public Cell(int state) {
+		this.state = (byte)state;
 	}
 	
-	public boolean getState() {
+	public byte getCellState() {
 		return state;
 	}
 	
-	public void setState(boolean state) {
+	public void setCellState(byte state) {
 		this.state = state;
 	}
 	
